@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  /* Sophisticated Dark Color Palette Mapping Override for Tailwind */
+  --color-slate-50: #fafafa; /* light background secondary fallback */
+  --color-slate-100: #f4f4f5; /* light border / background fallback */
+  --color-slate-250: #e4e4e7;
+  --color-slate-300: #d4d4d8;
+  --color-slate-400: #a1a1aa;
+  --color-slate-500: #71717a;
+  
+  /* Dark mode mappings matching the Sophisticated Dark design html exactly */
+  --color-slate-950: #09090b; /* Page main background */
+  --color-slate-900: #141416; /* Cards, panels, forms, modals background */
+  --color-slate-850: #1b1b1f; /* Lighter background blocks */
+  --color-slate-800: #1f1f23; /* Borders dark, inputs dark background */
+  --color-slate-750: #2c2c31; /* Subtle input borders / hover cards */
+}
+
+/* Custom scrollbars for a highly polished Sophisticated Dark feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(82, 82, 91, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(161, 161, 170, 0.5);
+}

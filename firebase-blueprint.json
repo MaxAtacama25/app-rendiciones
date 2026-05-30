@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Profiles for expense submitters containing RUT, job position, and admin approval status.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique Firebase Authentication UID." },
+        "email": { "type": "string", "description": "The user's email address." },
+        "name": { "type": "string", "description": "The user's full name." },
+        "rut": { "type": "string", "description": "Confirmed Chilean RUT / tax identifier." },
+        "cargo": { "type": "string", "description": "User's confirmed job role or cargo." },
+        "role": { "type": "string", "enum": ["user", "admin"], "description": "The system privilege level." },
+        "approved": { "type": "boolean", "description": "Whether an admin has approved this user to submit expenses." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp." }
+      },
+      "required": ["uid", "email", "name", "rut", "cargo", "role", "approved", "createdAt"]
+    },
+    "Category": {
+      "title": "Expense Category",
+      "description": "Categories for expense categorization configured by managers.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique category slug or ID." },
+        "name": { "type": "string", "description": "Category human-readable name." },
+        "description": { "type": "string", "description": "A short summary of the category." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp." }
+      },
+      "required": ["id", "name", "description", "createdAt"]
+    },
+    "Expense": {
+      "title": "Expense Report",
+      "description": "Single expense claim submitted by a user, containing OCR and admin status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique expense record ID." },
+        "userId": { "type": "string", "description": "UID of the submitter user." },
+        "userName": { "type": "string", "description": "Name of the submitter." },
+        "userEmail": { "type": "string", "description": "Email of the submitter." },
+        "category": { "type": "string", "description": "Selected expense category ID or Name." },
+        "rut": { "type": "string", "description": "OCR detected RUT of the merchant." },
+        "vendorName": { "type": "string", "description": "OCR detected merchant/vendor name." },
+        "date": { "type": "string", "description": "OCR detected transaction date (YYYY-MM-DD or standard)." },
+        "totalAmount": { "type": "number", "description": "OCR detected total invoice amount." },
+        "description": { "type": "string", "description": "Optional human description provided by the user." },
+        "receiptBase64": { "type": "string", "description": "Optional compressed visual documentation." },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"], "description": "Admin review state." },
+        "rejectionReason": { "type": "string", "description": "Explanation if status is 'rejected'." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Submission/creation time." },
+        "approvedAt": { "type": "string", "format": "date-time", "description": "Approval/Rejection time." },
+        "approvedBy": { "type": "string", "description": "UID of the reviewer admin/gerente." }
+      },
+      "required": ["id", "userId", "userName", "userEmail", "category", "rut", "vendorName", "date", "totalAmount", "status", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles database"
+    },
+    "categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Expense categories collection"
+    },
+    "expenses/{expenseId}": {
+      "schema": "Expense",
+      "description": "Expense reports and claims collection"
+    }
+  }
+}

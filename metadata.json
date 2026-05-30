@@ -1,0 +1,6 @@
+{
+  "name": "Rendición de Gastos con OCR",
+  "description": "Sistema corporativo de rendición de fondos con inicio de sesión de Google, administrador de tipos de consumo, buscador interactivo, exportador de datos CSV y digitalizador inteligente OCR de boletas mediante Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,118 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net - default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitives & Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Role check: Looks up the user's role field in the Firestore users collection
+    function isAdmin() {
+      return isSignedIn() && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Active block constraint: normal users must be approved by an administrator before they can submit expenses
+    function isUserApproved() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.approved == true;
+    }
+
+    // Entity validation functions
+    function isValidUser(data) {
+      return data.uid is string && data.uid.size() <= 128 &&
+             data.email is string && data.email.size() <= 200 &&
+             data.name is string && data.name.size() <= 200 &&
+             data.rut is string && data.rut.size() <= 30 &&
+             data.cargo is string && data.cargo.size() <= 100 &&
+             data.role in ['user', 'admin'] &&
+             data.approved is bool &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidCategory(data) {
+      return data.id is string && data.id.size() <= 50 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.description is string && data.description.size() <= 500 &&
+             data.createdAt is timestamp;
+    }
+
+    function isValidExpense(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId is string && data.userId.size() <= 128 &&
+             data.userName is string && data.userName.size() <= 200 &&
+             data.userEmail is string && data.userEmail.size() <= 200 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.rut is string && data.rut.size() <= 30 &&
+             data.vendorName is string && data.vendorName.size() <= 200 &&
+             data.date is string && data.date.size() <= 50 &&
+             data.totalAmount is number &&
+             data.status in ['pending', 'approved', 'rejected'] &&
+             data.createdAt is timestamp;
+    }
+
+    // Matches
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      // Only admins can query list of users for validation
+      allow list: if isAdmin();
+      
+      // Creation rule: User can create their profile.
+      // Boostrapped Admin check: User with maxifireman.mu@gmail.com can self-register as admin and approved=true
+      allow create: if isSignedIn() && isOwner(userId) && isValidUser(request.resource.data) && (
+        (request.resource.data.email.lower() == 'maxifireman.mu@gmail.com' && request.resource.data.role == 'admin' && request.resource.data.approved == true) ||
+        (request.resource.data.role == 'user' && request.resource.data.approved == false)
+      );
+
+      // Updates: Permitted for self (updates of details but keeping role/approval unaltered) OR for admins
+      allow update: if isSignedIn() && (
+        (isOwner(userId) && 
+         request.resource.data.role == resource.data.role && 
+         request.resource.data.approved == resource.data.approved && 
+         isValidUser(request.resource.data)) ||
+         (isAdmin() && isValidUser(request.resource.data))
+      );
+
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAdmin() && isValidCategory(request.resource.data);
+    }
+
+    match /expenses/{expenseId} {
+      // Users can only view/read their own expenses; admins can view all
+      allow get: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Submit/Create: Only approved users can submit. New submissions status must be 'pending'
+      allow create: if isSignedIn() && isUserApproved() && 
+        request.resource.data.userId == request.auth.uid && 
+        request.resource.data.status == 'pending' &&
+        isValidExpense(request.resource.data);
+
+      // Update: User can edit details of their claim as long as it remains pending.
+      // Admin/Reviewer can transition status to 'approved' or 'rejected'.
+      allow update: if isSignedIn() && (
+        (request.resource.data.userId == request.auth.uid && 
+         resource.data.status == 'pending' && 
+         request.resource.data.status == 'pending' &&
+         isValidExpense(request.resource.data)) ||
+        (isAdmin() && isValidExpense(request.resource.data))
+      );
+
+      // Delete: Only admins or own pending expenses can be deleted
+      allow delete: if isAdmin() || (request.auth.uid == resource.data.userId && resource.data.status == 'pending');
+    }
+  }
+}
