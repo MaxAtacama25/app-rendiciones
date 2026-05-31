@@ -996,6 +996,9 @@ export default function App() {
     );
   }
 
+  // Safety fallback in case profile is not yet hydrated
+  if (!profile) return null;
+
   // Active full application view
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200 flex flex-col">
