@@ -15,6 +15,9 @@ COPY . .
 # Compilar la aplicación React con Vite y el servidor backend
 RUN npm run build
 
+# Definir el entorno como producción
+ENV NODE_ENV=production
+
 # Exponer el puerto
 EXPOSE 3000
 
