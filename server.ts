@@ -1,7 +1,7 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import Tesseract from "tesseract.js";
+import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
 // Load local environment variables if available
@@ -21,7 +21,7 @@ async function startServer() {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
 
-  // API - OCR Receipts parser with Gemini
+  // API - OCR Receipts parser with Gemini 1.5 Flash
   app.post("/api/ocr", async (req, res) => {
     try {
       const { fileData, mimeType } = req.body;
@@ -29,70 +29,65 @@ async function startServer() {
         return res.status(400).json({ error: "Faltan datos de archivo o tipo mime del documento." });
       }
 
-      // Tesseract.js does not support PDFs. We skip OCR to prevent server crashes.
-      if (mimeType === "application/pdf" || fileData.includes("application/pdf")) {
-        console.log("Archivo PDF detectado. Omitiendo OCR local para evitar fallos de Tesseract.");
-        return res.json({ success: true, data: { rut: "", vendorName: "Archivo PDF", date: "", totalAmount: 0 } });
+      // Check for Gemini API Key
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(500).json({ 
+          error: "API Key de Gemini no configurada en el servidor. Configure GEMINI_API_KEY en las variables de entorno." 
+        });
       }
 
-      // Remove base64 prefix if needed, Tesseract can accept buffers or data URIs
+      // Extract raw base64 and accurate mime type
       let base64Data = fileData;
+      let finalMime = mimeType;
       if (fileData.includes(";base64,")) {
-        base64Data = fileData.split(";base64,").pop() || fileData;
-      }
-      const imageBuffer = Buffer.from(base64Data, "base64");
-
-      // Extract text using Tesseract
-      console.log("Iniciando escaneo local con Tesseract...");
-      const { data: { text } } = await Tesseract.recognize(imageBuffer, 'spa');
-      console.log("Texto extraído:", text);
-
-      // Parse text with regex
-      // RUT: Look for typical format XX.XXX.XXX-X or XXXXXXXX-X
-      const rutMatch = text.match(/\b(\d{1,2}\.?\d{3}\.?\d{3}[-‐‑][0-9kK])\b/i);
-      const rut = rutMatch ? rutMatch[1].toUpperCase() : "";
-
-      // Date: Look for DD/MM/YYYY or DD-MM-YYYY
-      const dateMatch = text.match(/\b(\d{2}[-/]\d{2}[-/]\d{4})\b/);
-      let date = "";
-      if (dateMatch) {
-        // Convert to YYYY-MM-DD if possible
-        const parts = dateMatch[1].split(/[-/]/);
-        if (parts.length === 3) {
-          date = `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
+        const parts = fileData.split(";base64,");
+        finalMime = parts[0].split(":")[1];
+        base64Data = parts[1];
       }
 
-      // Total: Look for TOTAL or similar keyword and grab the number
-      const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-      let totalAmount = 0;
-      for (let i = 0; i < lines.length; i++) {
-        const line = lines[i].toUpperCase();
-        if (line.includes("TOTAL") || line.includes("MONTO")) {
-          // Extract numbers from this line
-          const numbers = line.match(/(\d[\d\.\,]*)/g);
-          if (numbers && numbers.length > 0) {
-            // Pick the last number on the line, strip non-digits
-            const lastNum = numbers[numbers.length - 1].replace(/[^\d]/g, '');
-            if (lastNum) {
-              totalAmount = parseInt(lastNum, 10);
+      console.log("Iniciando escaneo con Google Gemini 1.5 Flash...");
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+      const prompt = `Analiza esta imagen o documento de un recibo o boleta de Chile. 
+      Extrae la siguiente información y devuélvela ESTRICTAMENTE en formato JSON:
+      - rut: RUT del emisor (formato XXXXXXXX-X). Si no lo encuentras, devuelve string vacío.
+      - vendorName: Nombre exacto de la tienda o comercio emisor. Si no lo encuentras, "Desconocido".
+      - date: Fecha de emisión en formato YYYY-MM-DD. Si no la encuentras, string vacío.
+      - totalAmount: Monto total final a pagar (número entero). Si no lo encuentras, 0.
+      
+      No incluyas explicaciones, solo el bloque JSON válido.`;
+
+      const aiResponse = await ai.models.generateContent({
+        model: 'gemini-1.5-flash',
+        contents: [
+          prompt,
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType: finalMime
             }
           }
+        ],
+        config: {
+          responseMimeType: "application/json",
+        }
+      });
+
+      const responseText = aiResponse.text;
+      console.log("Respuesta de Gemini:", responseText);
+      
+      let cleanJson;
+      try {
+        cleanJson = JSON.parse(responseText);
+      } catch (parseErr) {
+        // Fallback robust parsing in case the model wraps it in markdown blocks
+        const match = responseText.match(/\\{.*\\}/s);
+        if (match) {
+          cleanJson = JSON.parse(match[0]);
+        } else {
+          throw new Error("El modelo no devolvió un JSON válido.");
         }
       }
-
-      // Vendor Name: Heuristic -> Use the first line that looks like a name (not a date/number)
-      let vendorName = "Desconocido";
-      if (lines.length > 0) {
-        vendorName = lines[0]; // Simplest heuristic: first line is the vendor
-      }
-
-      const cleanJson = {
-        rut,
-        vendorName,
-        date,
-        totalAmount
-      };
 
       res.json({ success: true, data: cleanJson });
     } catch (err: any) {
