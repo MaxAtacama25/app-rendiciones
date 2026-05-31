@@ -45,7 +45,7 @@ async function startServer() {
         base64Data = parts[1];
       }
 
-      console.log("Iniciando escaneo con Google Gemini 1.5 Flash...");
+      console.log("Iniciando escaneo con Google Gemini 2.5 Flash...");
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
       const prompt = `Analiza esta imagen o documento de un recibo o boleta de Chile. 
@@ -58,7 +58,7 @@ async function startServer() {
       No incluyas explicaciones, solo el bloque JSON válido.`;
 
       const aiResponse = await ai.models.generateContent({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.5-flash',
         contents: [
           prompt,
           {
