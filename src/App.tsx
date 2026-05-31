@@ -138,6 +138,20 @@ export default function App() {
     }
   }, []);
 
+  // Utility: Format RUT (e.g. 12.345.678-9)
+  const formatRut = (rut: string) => {
+    let clean = rut.replace(/[^0-9kK]/g, '').toUpperCase();
+    if (clean.length < 2) return clean;
+    const dv = clean.slice(-1);
+    let rutNum = clean.slice(0, -1);
+    let formatted = "";
+    while (rutNum.length > 3) {
+      formatted = "." + rutNum.slice(-3) + formatted;
+      rutNum = rutNum.slice(0, -3);
+    }
+    return rutNum + formatted + "-" + dv;
+  };
+
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -278,8 +292,24 @@ export default function App() {
 
     // Chilean RUT Validator helper
     const cleanRut = confirmRut.replace(/\./g, "").replace(/\s/g, "");
-    if (cleanRut.length < 7) {
+    if (cleanRut.length < 7 || !cleanRut.includes("-")) {
       setRegisterError("El RUT ingresado no es válido.");
+      return;
+    }
+
+    const formattedRut = confirmRut.trim();
+
+    try {
+      // Uniqueness check for RUT
+      const q = query(collection(db, "users"), where("rut", "==", formattedRut));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        setRegisterError("El RUT ingresado ya se encuentra registrado por otro usuario.");
+        return;
+      }
+    } catch (err: any) {
+      console.error("Error validando RUT:", err);
+      setRegisterError("Error al verificar disponibilidad del RUT.");
       return;
     }
 
@@ -293,7 +323,7 @@ export default function App() {
       uid: user.uid,
       email: user.email?.toLowerCase().trim() || "",
       name: user.displayName || "Usuario Registrado",
-      rut: confirmRut.trim(),
+      rut: formattedRut,
       cargo: confirmCargo.trim(),
       role: userRole,
       approved: isApproved,
@@ -371,6 +401,16 @@ export default function App() {
     e.preventDefault();
     if (!editingUser) return;
     try {
+      // Uniqueness check for RUT
+      const formattedRut = editingUser.rut.trim();
+      const q = query(collection(db, "users"), where("rut", "==", formattedRut));
+      const querySnapshot = await getDocs(q);
+      const duplicate = querySnapshot.docs.find(d => d.id !== editingUser.uid);
+      if (duplicate) {
+        alert("El RUT ingresado ya se encuentra registrado por otro usuario.");
+        return;
+      }
+
       await updateDoc(doc(db, "users", editingUser.uid), {
         name: editingUser.name,
         rut: editingUser.rut,
@@ -947,7 +987,7 @@ export default function App() {
                       type="text"
                       placeholder="12.345.678-9"
                       value={confirmRut}
-                      onChange={(e) => setConfirmRut(e.target.value)}
+                      onChange={(e) => setConfirmRut(formatRut(e.target.value))}
                       className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                     />
                   </div>
@@ -1574,7 +1614,7 @@ export default function App() {
                       type="text"
                       required
                       value={editingUser.rut}
-                      onChange={(e) => setEditingUser({...editingUser, rut: e.target.value})}
+                      onChange={(e) => setEditingUser({...editingUser, rut: formatRut(e.target.value)})}
                       className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-mono"
                     />
                   </div>
@@ -1701,7 +1741,9 @@ export default function App() {
                       {profile.role === "admin" && <th className="p-3">Colaborador</th>}
                       <th className="p-3">Clasificado</th>
                       <th className="p-3">Vendedor / RUT</th>
-                      <th className="p-3">Fecha</th>
+                      <th className="p-3">F. Emisión</th>
+                      <th className="p-3">F. Rendición</th>
+                      <th className="p-3">F. Resolución</th>
                       <th className="p-3">Total CLP</th>
                       <th className="p-3">Estado</th>
                       <th className="p-3 text-right">Acciones</th>
@@ -1710,7 +1752,7 @@ export default function App() {
                   <tbody className="divide-y divide-slate-100 dark:divide-slate-850">
                     {finalBuscadorList.length === 0 ? (
                       <tr>
-                        <td colSpan={profile.role === "admin" ? 7 : 6} className="text-center p-8 text-slate-400">
+                        <td colSpan={profile.role === "admin" ? 9 : 8} className="text-center p-8 text-slate-400">
                           <AlertCircle className="w-6 h-6 mx-auto mb-2 text-slate-300" />
                           <span>No se encontraron rendiciones de gastos registradas con estos filtros.</span>
                         </td>
@@ -1734,6 +1776,14 @@ export default function App() {
                             <span className="text-[10px] text-slate-400 font-mono">{exp.rut}</span>
                           </td>
                           <td className="p-3 text-slate-500 whitespace-nowrap">{exp.date}</td>
+                          <td className="p-3 text-slate-500 whitespace-nowrap">
+                            {new Date(exp.createdAt?.seconds ? exp.createdAt.seconds * 1000 : exp.createdAt || Date.now()).toLocaleDateString("es-CL")}
+                          </td>
+                          <td className="p-3 text-slate-500 whitespace-nowrap">
+                            {exp.approvedAt 
+                              ? new Date(exp.approvedAt?.seconds ? exp.approvedAt.seconds * 1000 : exp.approvedAt).toLocaleDateString("es-CL")
+                              : "-"}
+                          </td>
                           <td className="p-3 font-semibold text-slate-900 dark:text-neutral-100 font-mono text-xs">
                             {formatCurrency(exp.totalAmount)}
                           </td>
