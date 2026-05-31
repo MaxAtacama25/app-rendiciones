@@ -122,6 +122,7 @@ export default function App() {
   // Selection View details modal state
   const [viewingExpense, setViewingExpense] = useState<Expense | null>(null);
   const [editExpenseId, setEditExpenseId] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
 
   // Drag and Drop State
   const [dragActive, setDragActive] = useState<boolean>(false);
@@ -351,6 +352,34 @@ export default function App() {
       });
     } catch (err: any) {
       handleFirestoreError(err, OperationType.UPDATE, `users/${uid}`);
+    }
+  };
+
+  // Admin deletes a user account (Expenses are kept for accounting)
+  const handleDeleteUser = async (uid: string) => {
+    if (window.confirm("¿Seguro que desea eliminar a este usuario? Sus gastos históricos se mantendrán por motivos contables, pero perderá todo acceso a la plataforma.")) {
+      try {
+        await deleteDoc(doc(db, "users", uid));
+      } catch (err: any) {
+        handleFirestoreError(err, OperationType.DELETE, `users/${uid}`);
+      }
+    }
+  };
+
+  // Admin submits edits for a user account
+  const handleEditUserSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    try {
+      await updateDoc(doc(db, "users", editingUser.uid), {
+        name: editingUser.name,
+        rut: editingUser.rut,
+        cargo: editingUser.cargo,
+        role: editingUser.role
+      });
+      setEditingUser(null);
+    } catch (err: any) {
+      handleFirestoreError(err, OperationType.UPDATE, `users/${editingUser.uid}`);
     }
   };
 
@@ -1514,6 +1543,80 @@ export default function App() {
             </div>
           )}
 
+          {/* EDIT USER MODAL */}
+          {editingUser && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-sm">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-800">
+                <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+                  <h3 className="font-semibold text-slate-800 dark:text-neutral-200">Editar Usuario</h3>
+                  <button onClick={() => setEditingUser(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <form onSubmit={handleEditUserSubmit} className="p-5 space-y-4 font-sans text-xs">
+                  <div>
+                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">Nombre Completo</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingUser.name}
+                      onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">RUT</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingUser.rut}
+                      onChange={(e) => setEditingUser({...editingUser, rut: e.target.value})}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">Cargo o Posición</label>
+                    <input
+                      type="text"
+                      required
+                      value={editingUser.cargo}
+                      onChange={(e) => setEditingUser({...editingUser, cargo: e.target.value})}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-widest mb-1">Rol en Sistema</label>
+                    <select
+                      value={editingUser.role}
+                      onChange={(e) => setEditingUser({...editingUser, role: e.target.value as "user" | "admin"})}
+                      className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
+                    >
+                      <option value="user">Usuario Colaborador</option>
+                      <option value="admin">Administrador (Contabilidad)</option>
+                    </select>
+                  </div>
+
+                  <div className="pt-2 flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setEditingUser(null)}
+                      className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium rounded-lg text-xs hover:bg-slate-50 dark:hover:bg-slate-800 transition duration-150"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs transition duration-150 shadow"
+                    >
+                      Guardar Cambios
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
           {/* 3. HISTORICAL claims LIST WITH SEARCH ENGINE */}
           {activeTab === "history" && (
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 transition-colors duration-200 flex flex-col gap-4">
@@ -1769,16 +1872,32 @@ export default function App() {
                             {u.uid === profile.uid ? (
                               <span className="text-[10px] text-slate-400 italic font-medium px-2">Su cuenta</span>
                             ) : (
-                              <button
-                                onClick={() => validateUserApproval(u.uid, !u.approved)}
-                                className={`px-2 py-1 rounded text-[10px] font-medium duration-100 cursor-pointer ${
-                                  u.approved 
-                                    ? "bg-amber-500 hover:bg-amber-400 text-slate-950" 
-                                    : "bg-red-600 hover:bg-red-500 text-white shadow-sm"
-                                }`}
-                              >
-                                {u.approved ? "Desactivar" : "Aprobar"}
-                              </button>
+                              <div className="flex items-center justify-end gap-1.5">
+                                <button
+                                  onClick={() => setEditingUser(u)}
+                                  className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded cursor-pointer duration-100"
+                                  title="Editar perfil"
+                                >
+                                  <Pencil className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(u.uid)}
+                                  className="p-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-900/40 text-slate-600 hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-400 rounded cursor-pointer duration-100"
+                                  title="Eliminar usuario"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  onClick={() => validateUserApproval(u.uid, !u.approved)}
+                                  className={`px-2 py-1.5 rounded text-[10px] font-medium duration-100 cursor-pointer ${
+                                    u.approved 
+                                      ? "bg-amber-500 hover:bg-amber-400 text-slate-950" 
+                                      : "bg-red-600 hover:bg-red-500 text-white shadow-sm"
+                                  }`}
+                                >
+                                  {u.approved ? "Deshabilitar" : "Aprobar"}
+                                </button>
+                              </div>
                             )}
                           </td>
                         </tr>
