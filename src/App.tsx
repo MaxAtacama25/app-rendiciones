@@ -51,6 +51,7 @@ import {
   Trash2,
   Pencil
 } from "lucide-react";
+import JSZip from "jszip";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
 import { auth, db, googleProvider, handleFirestoreError, OperationType } from "./firebase";
 import { UserProfile, Category, Expense } from "./types";
@@ -102,6 +103,7 @@ export default function App() {
   const [fileAttached, setFileAttached] = useState<File | null>(null);
   const [attachedBase64, setAttachedBase64] = useState<string>("");
   const [isOCRProcessing, setIsOCRProcessing] = useState<boolean>(false);
+  const [isExportingZip, setIsExportingZip] = useState<boolean>(false);
   const [ocrStatusMessage, setOcrStatusMessage] = useState<string>("");
   const [ocrErrorMessage, setOcrErrorMessage] = useState<string>("");
   const [submitSuccessMessage, setSubmitSuccessMessage] = useState<string>("");
