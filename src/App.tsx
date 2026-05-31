@@ -286,7 +286,7 @@ export default function App() {
     // Ensure case insensitivity is evaluated
     const isSpecialAdmin = user.email?.toLowerCase().trim() === "maxifireman.mu@gmail.com";
     const userRole: "user" | "admin" = isSpecialAdmin ? "admin" : "user";
-    const isApproved: boolean = isSpecialAdmin ? true : false; // Users must wait for administrative verification
+    const isApproved: boolean = true; // Auto-aprobar a todos los usuarios que inician sesión con Google
 
     const newProfile: UserProfile = {
       uid: user.uid,
