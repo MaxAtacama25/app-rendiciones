@@ -166,6 +166,14 @@ export default function App() {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setAuthLoading(true);
       if (firebaseUser) {
+        // Domain restriction check
+        if (!firebaseUser.email?.toLowerCase().trim().endsWith("@gmail.com")) {
+          await signOut(auth);
+          alert("Acceso denegado: El sistema solo autoriza correos corporativos o personales terminados en @gmail.com.");
+          setAuthLoading(false);
+          return;
+        }
+
         setUser(firebaseUser);
         setProfileLoading(true);
         try {
@@ -1878,7 +1886,16 @@ export default function App() {
               
               <div className="mb-6">
                 <h2 className="font-display text-xl font-bold text-slate-900 dark:text-white">Validar Usuarios Inscritos</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400">Apruebe o bloquee cuentas de colaboradores antes de que envíen sus rendiciones de gastos.</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">Apruebe o bloquee cuentas de colaboradores antes de que envíen sus rendiciones de gastos.</p>
+                
+                {/* Instrucciones de Administración */}
+                <div className="bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-100 dark:border-indigo-900/50 p-4 rounded-xl flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                  <div className="text-xs text-slate-700 dark:text-slate-300 font-sans">
+                    <h4 className="font-semibold text-indigo-900 dark:text-indigo-300 mb-1">¿Cómo autorizar a un nuevo Administrador?</h4>
+                    <p>Dado que el acceso al sistema es exclusivamente mediante cuentas Google, pida a su nuevo administrador que inicie sesión con su correo <strong>@gmail.com</strong> para registrarse. Luego, búsquelo en esta tabla, presione el ícono de <strong>Lápiz (✏️)</strong>, asígnele el rol de <strong>Administrador (Contabilidad)</strong> y haga clic en <strong>Aprobar</strong>.</p>
+                  </div>
+                </div>
               </div>
 
               <div className="overflow-x-auto border border-slate-100 dark:border-slate-850 rounded-xl">
