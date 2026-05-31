@@ -788,7 +788,7 @@ export default function App() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-200">
         <div className="relative flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin"></div>
           <span className="mt-4 font-sans text-sm font-medium animate-pulse">Cargando Sistema de Rendición de Gastos...</span>
         </div>
       </div>
@@ -802,8 +802,8 @@ export default function App() {
         {/* Abstract design elements branding card */}
         <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden p-8 transition-transform duration-300">
           <div className="flex flex-col items-center text-center">
-            <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 rounded-2xl mb-4">
-              <FileCheck className="w-10 h-10" />
+            <div className="mb-6">
+              <img src="/logo-cainsa.png" alt="CAINSA SYM" className="h-16 w-auto mx-auto" />
             </div>
             <h1 className="font-display text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               RendicSym Gastos
@@ -860,7 +860,7 @@ export default function App() {
                       placeholder="12.345.678-9"
                       value={confirmRut}
                       onChange={(e) => setConfirmRut(e.target.value)}
-                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                     />
                   </div>
 
@@ -874,7 +874,7 @@ export default function App() {
                       placeholder="Ej: Ejecutivo de Proyectos / Ingeniero de Software"
                       value={confirmCargo}
                       onChange={(e) => setConfirmCargo(e.target.value)}
-                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                      className="w-full px-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -889,7 +889,7 @@ export default function App() {
                   </button>
                   <button
                     type="submit"
-                    className="w-2/3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs transition-all cursor-pointer shadow-md shadow-emerald-500/20"
+                    className="w-2/3 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs transition-all cursor-pointer shadow-md shadow-red-500/20"
                   >
                     Confirmar Registro
                   </button>
@@ -924,12 +924,10 @@ export default function App() {
       <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-40 px-4 py-3 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-emerald-600 text-white rounded-lg">
-              <FileCheck className="w-5 h-5" />
-            </div>
+            <img src="/logo-cainsa.png" alt="CAINSA SYM" className="h-8 w-auto" />
             <div>
               <span className="font-display text-lg font-bold tracking-tight text-slate-900 dark:text-white">RendicSym</span>
-              <span className="text-xs text-emerald-600 font-mono uppercase bg-emerald-50 dark:bg-emerald-950/50 px-1.5 py-0.5 rounded ml-2 font-semibold">
+              <span className="text-xs text-red-600 font-mono uppercase bg-red-50 dark:bg-red-950/50 px-1.5 py-0.5 rounded ml-2 font-semibold">
                 {profile.role === "admin" ? "Gerencia / Admin" : "Colaborador"}
               </span>
             </div>
@@ -983,7 +981,7 @@ export default function App() {
             onClick={() => setActiveTab("dashboard")}
             className={`w-full flex items-center justify-start gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
               activeTab === "dashboard"
-                ? "bg-emerald-600 text-white shadow-sm"
+                ? "bg-red-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
           >
@@ -995,7 +993,7 @@ export default function App() {
             onClick={() => setActiveTab("submit")}
             className={`w-full flex items-center justify-start gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
               activeTab === "submit"
-                ? "bg-emerald-600 text-white shadow-sm"
+                ? "bg-red-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
           >
@@ -1007,7 +1005,7 @@ export default function App() {
             onClick={() => setActiveTab("history")}
             className={`w-full flex items-center justify-start gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
               activeTab === "history"
-                ? "bg-emerald-600 text-white shadow-sm"
+                ? "bg-red-600 text-white shadow-sm"
                 : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
             }`}
           >
@@ -1025,7 +1023,7 @@ export default function App() {
                 onClick={() => setActiveTab("admin-users")}
                 className={`w-full flex items-center justify-start gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
                   activeTab === "admin-users"
-                    ? "bg-emerald-600 text-white shadow-sm"
+                    ? "bg-red-600 text-white shadow-sm"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}
               >
@@ -1042,7 +1040,7 @@ export default function App() {
                 onClick={() => setActiveTab("admin-categories")}
                 className={`w-full flex items-center justify-start gap-2.5 px-3 py-2.5 rounded-lg text-xs font-medium cursor-pointer transition-all ${
                   activeTab === "admin-categories"
-                    ? "bg-emerald-600 text-white shadow-sm"
+                    ? "bg-red-600 text-white shadow-sm"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                 }`}
               >
@@ -1069,7 +1067,7 @@ export default function App() {
 
                 <div className="flex items-center gap-3 font-sans">
                   <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-850 px-3 py-1.5 rounded-lg text-xs font-medium">
-                    <Calendar className="w-4 h-4 text-emerald-600" />
+                    <Calendar className="w-4 h-4 text-red-600" />
                     <span className="text-slate-400">Fecha Inicial:</span>
                     <input
                       id="dashboard-start-date"
@@ -1089,11 +1087,11 @@ export default function App() {
                   <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:shadow-md transition-all duration-150">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Global Aprobado</span>
-                      <div className="p-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 rounded-lg">
+                      <div className="p-2 bg-red-50 dark:bg-red-950/40 text-red-600 rounded-lg">
                         <CheckCircle className="w-5 h-5" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                    <h3 className="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400">
                       {formatCurrency(adminMetrics.approved)}
                     </h3>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2">Monto total reembolsado a colaboradores desde el hito</p>
@@ -1131,11 +1129,11 @@ export default function App() {
                   <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 hover:shadow-md transition-all duration-150">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Mis Montos Aprobados</span>
-                      <div className="p-2 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 rounded-lg">
+                      <div className="p-2 bg-red-50 dark:bg-red-950/30 text-red-600 rounded-lg">
                         <CheckCircle className="w-5 h-5" />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">
+                    <h3 className="text-2xl font-bold tracking-tight text-red-600 dark:text-red-400">
                       {formatCurrency(metrics.approved)}
                     </h3>
                     <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-2">Fondos acreditados para devolución transferencia</p>
@@ -1175,11 +1173,11 @@ export default function App() {
                 
                 <div className="p-4 bg-slate-50 dark:bg-slate-950 rounded-lg space-y-3 font-sans text-xs flex flex-col gap-2">
                   <div className="flex items-start gap-2.5">
-                    <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                     <span><strong>Reducción de Tiempos OCR:</strong> El motor de OCR procesa con Gemini-3.5-flash sobre comprobantes y detecta nombres comerciales, RUTs del emisor y montos exactos para ahorrar digitación.</span>
                   </div>
                   <div className="flex items-start gap-2.5">
-                    <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
                     <span><strong>Imágenes Optimizadas:</strong> El sistema pre-comprime automáticamente cualquier imagen de cámara pesada para no saturar tu banda ancha y resguardar cuotas en la base de datos Firestore.</span>
                   </div>
                   {profile.role === "admin" && (
@@ -1193,7 +1191,7 @@ export default function App() {
                 <div className="mt-6 flex gap-3">
                   <button
                     onClick={() => setActiveTab("submit")}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow"
                   >
                     Rendir Nuevo Gasto
                   </button>
@@ -1235,8 +1233,8 @@ export default function App() {
                     onDrop={handleDrop}
                     className={`border-2 border-dashed rounded-xl p-8 text-center flex flex-col items-center justify-center cursor-pointer transition-all ${
                       dragActive 
-                        ? "border-emerald-500 bg-emerald-50/10" 
-                        : "border-slate-200 dark:border-slate-850 hover:border-emerald-600"
+                        ? "border-red-500 bg-red-50/10" 
+                        : "border-slate-200 dark:border-slate-850 hover:border-red-600"
                     }`}
                   >
                     <Upload className="w-10 h-10 text-slate-400 mb-3" />
@@ -1257,13 +1255,13 @@ export default function App() {
                     />
                     <label
                       htmlFor="expense-file-picker"
-                      className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs transition duration-150 shadow-md shadow-emerald-500/10 cursor-pointer"
+                      className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs transition duration-150 shadow-md shadow-red-500/10 cursor-pointer"
                     >
                       Seleccionar archivo corporativo
                     </label>
 
                     {fileAttached && (
-                      <div className="mt-4 text-xs font-medium text-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                      <div className="mt-4 text-xs font-medium text-red-600 bg-red-50/50 dark:bg-red-950/30 px-3 py-1.5 rounded-lg flex items-center gap-2">
                         <FileText className="w-4 h-4" />
                         <span>Archivo adjunto: {fileAttached.name} ({Math.round(fileAttached.size / 1024)} KB)</span>
                       </div>
@@ -1273,8 +1271,8 @@ export default function App() {
                   {/* OCR loaders or error notices */}
                   {isOCRProcessing && (
                     <div className="p-4 bg-slate-50 dark:bg-slate-950/50 rounded-xl border border-slate-200 dark:border-slate-850 flex flex-col items-center text-center">
-                      <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin mb-3"></div>
-                      <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Procesando OCR con Inteligencia Artificial...</span>
+                      <div className="w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+                      <span className="text-xs font-semibold text-red-600 dark:text-red-400">Procesando OCR con Inteligencia Artificial...</span>
                       <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1 animate-pulse">{ocrStatusMessage}</p>
                     </div>
                   )}
@@ -1287,7 +1285,7 @@ export default function App() {
                   )}
 
                   {submitSuccessMessage && (
-                    <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 rounded-xl border border-emerald-100 dark:border-emerald-900/30 font-sans text-xs flex items-center gap-2.5">
+                    <div className="p-4 bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 rounded-xl border border-red-100 dark:border-red-900/30 font-sans text-xs flex items-center gap-2.5">
                       <CheckCircle className="w-5 h-5" />
                       <span>{submitSuccessMessage}</span>
                     </div>
@@ -1312,7 +1310,7 @@ export default function App() {
                           id="form-category-select"
                           value={formCategory}
                           onChange={(e) => setFormCategory(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none focus:bg-white"
                         >
                           <option value="">-- Seleccionar Categoría --</option>
                           {categories.map((c) => (
@@ -1331,7 +1329,7 @@ export default function App() {
                           placeholder="Rut asignado en la boleta (Ej. 76.123.456-K)"
                           value={formRut}
                           onChange={(e) => setFormRut(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                         />
                       </div>
 
@@ -1345,7 +1343,7 @@ export default function App() {
                           placeholder="Ej: Lider, Copec, Restaurant S.A."
                           value={formVendor}
                           onChange={(e) => setFormVendor(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                         />
                       </div>
 
@@ -1358,7 +1356,7 @@ export default function App() {
                           type="date"
                           value={formDate}
                           onChange={(e) => setFormDate(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                         />
                       </div>
 
@@ -1372,7 +1370,7 @@ export default function App() {
                           placeholder="Monto chileno exacto de la boleta"
                           value={formAmount || ""}
                           onChange={(e) => setFormAmount(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                         />
                       </div>
 
@@ -1386,7 +1384,7 @@ export default function App() {
                           placeholder="Ej: Almuerzo de negocios cliente VIP o Bencina sucursal"
                           value={formDescription}
                           onChange={(e) => setFormDescription(e.target.value)}
-                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-xs text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-red-500 focus:outline-none"
                         />
                       </div>
 
@@ -1412,7 +1410,7 @@ export default function App() {
                       </button>
                       <button
                         type="submit"
-                        className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs shadow-md shadow-emerald-500/10 cursor-pointer"
+                        className="px-5 py-2.5 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs shadow-md shadow-red-500/10 cursor-pointer"
                       >
                         Enviar Rendición
                       </button>
@@ -1443,7 +1441,7 @@ export default function App() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={exportToCSV}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow-sm transition-all"
+                    className="flex items-center gap-1.5 px-3 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow-sm transition-all"
                     title="Exportar base de datos a planilla"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -1551,7 +1549,7 @@ export default function App() {
                               </span>
                             )}
                             {exp.status === "approved" && (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-900/30">
+                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 px-2 py-0.5 rounded-full border border-red-200 dark:border-red-900/30">
                                 <Check className="w-3 h-3" />
                                 Aprobado
                               </span>
@@ -1580,7 +1578,7 @@ export default function App() {
                                 <>
                                   <button
                                     onClick={() => handleApproveExpense(exp)}
-                                    className="p-1 bg-emerald-500 hover:bg-emerald-400 text-white rounded cursor-pointer duration-100"
+                                    className="p-1 bg-red-500 hover:bg-red-400 text-white rounded cursor-pointer duration-100"
                                     title="Aprobar rendición de fondos"
                                   >
                                     <Check className="w-3.5 h-3.5" />
@@ -1655,7 +1653,7 @@ export default function App() {
                           <td className="p-3 font-medium text-slate-650 dark:text-slate-300">{u.cargo}</td>
                           <td className="p-3 whitespace-nowrap">
                             {u.approved ? (
-                              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-900/30">
+                              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 px-2.5 py-0.5 rounded-full border border-red-200 dark:border-red-900/30">
                                 <Check className="w-3 h-3" />
                                 Aprobado
                               </span>
@@ -1675,7 +1673,7 @@ export default function App() {
                                 className={`px-2 py-1 rounded text-[10px] font-medium duration-100 cursor-pointer ${
                                   u.approved 
                                     ? "bg-amber-500 hover:bg-amber-400 text-slate-950" 
-                                    : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm"
+                                    : "bg-red-600 hover:bg-red-500 text-white shadow-sm"
                                 }`}
                               >
                                 {u.approved ? "Desactivar" : "Aprobar"}
@@ -1720,7 +1718,7 @@ export default function App() {
                       placeholder="Ej: Materiales TI, Seguros, Marketing"
                       value={newCatName}
                       onChange={(e) => setNewCatName(e.target.value)}
-                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-red-500"
                     />
                   </div>
 
@@ -1732,7 +1730,7 @@ export default function App() {
                       placeholder="Ej: Insumos de papelería, cables, pendrives..."
                       value={newCatDesc}
                       onChange={(e) => setNewCatDesc(e.target.value)}
-                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-1 focus:ring-red-500"
                     />
                   </div>
                 </div>
@@ -1740,7 +1738,7 @@ export default function App() {
                 <div className="flex justify-end pt-2">
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow-sm shadow-emerald-500/10"
+                    className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-xs cursor-pointer shadow-sm shadow-red-500/10"
                   >
                     Agregar Tipo de Consumo
                   </button>
@@ -1898,7 +1896,7 @@ export default function App() {
 
                 <div className="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-100 dark:border-slate-850">
                   <span className="text-[10px] uppercase font-mono text-slate-400 block mb-0.5">Monto Rendido</span>
-                  <span className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-mono">{formatCurrency(viewingExpense.totalAmount)}</span>
+                  <span className="text-lg font-bold text-red-600 dark:text-red-400 font-mono">{formatCurrency(viewingExpense.totalAmount)}</span>
                 </div>
 
                 <div>
@@ -1917,7 +1915,7 @@ export default function App() {
                   )}
                   {viewingExpense.status === "approved" && (
                     <div className="space-y-1">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg border border-emerald-200 dark:border-emerald-900/30">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-900/30">
                         Aprobado por Administración
                       </span>
                       {viewingExpense.approvedAt && (
@@ -1944,14 +1942,14 @@ export default function App() {
                 {viewingExpense.receiptBase64 ? (
                   viewingExpense.receiptBase64.includes("application/pdf") ? (
                     <div className="flex flex-col items-center p-6 text-slate-400">
-                      <FileText className="w-16 h-16 text-emerald-600 mb-3" />
+                      <FileText className="w-16 h-16 text-red-600 mb-3" />
                       <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Documento de Comprobante PDF</span>
                       <p className="text-[10px] text-slate-400 mt-1">El documento cargado es de tipo PDF. Puedes abrirlo para su revisión completa.</p>
                       <a
                         href={viewingExpense.receiptBase64}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg text-[10px] uppercase tracking-wider shadow"
+                        className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg text-[10px] uppercase tracking-wider shadow"
                       >
                         Descargar / Ver PDF
                       </a>
