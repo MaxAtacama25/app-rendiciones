@@ -475,7 +475,17 @@ export default function App() {
         body: JSON.stringify({ fileData: base64String, mimeType })
       });
 
-      const resData = await response.json();
+      const resText = await response.text();
+      if (!response.ok) {
+        throw new Error(resText || `Error HTTP ${response.status}`);
+      }
+      
+      let resData;
+      try {
+        resData = JSON.parse(resText);
+      } catch (e) {
+        throw new Error("El servidor devolvió una respuesta no válida o vacía.");
+      }
       clearInterval(interval);
 
       if (!response.ok || !resData.success) {

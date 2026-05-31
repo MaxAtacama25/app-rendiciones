@@ -29,6 +29,12 @@ async function startServer() {
         return res.status(400).json({ error: "Faltan datos de archivo o tipo mime del documento." });
       }
 
+      // Tesseract.js does not support PDFs. We skip OCR to prevent server crashes.
+      if (mimeType === "application/pdf" || fileData.includes("application/pdf")) {
+        console.log("Archivo PDF detectado. Omitiendo OCR local para evitar fallos de Tesseract.");
+        return res.json({ success: true, data: { rut: "", vendorName: "Archivo PDF", date: "", totalAmount: 0 } });
+      }
+
       // Remove base64 prefix if needed, Tesseract can accept buffers or data URIs
       let base64Data = fileData;
       if (fileData.includes(";base64,")) {
