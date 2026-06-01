@@ -728,7 +728,9 @@ export default function App() {
       await updateDoc(doc(db, "expenses", expense.id), {
         status: "approved",
         approvedAt: new Date().toISOString(),
-        approvedBy: profile.uid
+        approvedBy: profile.uid,
+        approvedByName: profile.name,
+        approvedByRut: profile.rut
       });
     } catch (err: any) {
       handleFirestoreError(err, OperationType.UPDATE, `expenses/${expense.id}`);
@@ -757,7 +759,9 @@ export default function App() {
         status: "rejected",
         rejectionReason: rejectionReasonInput.trim(),
         approvedAt: new Date().toISOString(),
-        approvedBy: profile.uid
+        approvedBy: profile.uid,
+        approvedByName: profile.name,
+        approvedByRut: profile.rut
       });
       setSelectedReviewExpense(null);
       setRejectionReasonInput("");
@@ -1644,7 +1648,7 @@ export default function App() {
                       className="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg p-2.5 text-slate-800 dark:text-slate-200 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all"
                     >
                       <option value="user">Usuario Colaborador</option>
-                      <option value="admin">Administrador (Contabilidad)</option>
+                      <option value="admin">Administrador (Aprobador)</option>
                     </select>
                   </div>
 
@@ -1893,7 +1897,7 @@ export default function App() {
                   <AlertCircle className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
                   <div className="text-xs text-slate-700 dark:text-slate-300 font-sans">
                     <h4 className="font-semibold text-indigo-900 dark:text-indigo-300 mb-1">¿Cómo autorizar a un nuevo Administrador?</h4>
-                    <p>Dado que el acceso al sistema es exclusivamente mediante cuentas Google, pida a su nuevo administrador que inicie sesión con su correo <strong>@gmail.com</strong> para registrarse. Luego, búsquelo en esta tabla, presione el ícono de <strong>Lápiz (✏️)</strong>, asígnele el rol de <strong>Administrador (Contabilidad)</strong> y haga clic en <strong>Aprobar</strong>.</p>
+                    <p>Dado que el acceso al sistema es exclusivamente mediante cuentas Google, pida a su nuevo administrador que inicie sesión con su correo <strong>@gmail.com</strong> para registrarse. Luego, búsquelo en esta tabla, presione el ícono de <strong>Lápiz (✏️)</strong>, asígnele el rol de <strong>Administrador (Aprobador)</strong> y haga clic en <strong>Aprobar</strong>.</p>
                   </div>
                 </div>
               </div>
@@ -2204,22 +2208,33 @@ export default function App() {
                     </span>
                   )}
                   {viewingExpense.status === "approved" && (
-                    <div className="space-y-1">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-red-600 bg-red-50 dark:bg-red-950/20 rounded-lg border border-red-200 dark:border-red-900/30">
-                        Aprobado por Administración
-                      </span>
+                    <div className="mt-4 p-3 bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-400 rounded-xl border border-emerald-200 dark:border-emerald-900/50 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 shrink-0" />
+                        <span className="font-semibold text-sm">Gasto Aprobado Exitosamente</span>
+                      </div>
                       {viewingExpense.approvedAt && (
-                        <p className="text-[10px] text-slate-400 italic">Fecha aprobación: {new Date(viewingExpense.approvedAt).toLocaleString("es-CL")}</p>
+                        <p className="text-[10px] text-emerald-600/80 dark:text-emerald-400/80">Fecha aprobación: {new Date(viewingExpense.approvedAt?.seconds ? viewingExpense.approvedAt.seconds * 1000 : viewingExpense.approvedAt).toLocaleString("es-CL")}</p>
+                      )}
+                      {viewingExpense.approvedByName && (
+                        <p className="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 font-medium mt-1">Aprobado por: {viewingExpense.approvedByName} ({viewingExpense.approvedByRut || "Sin RUT"})</p>
                       )}
                     </div>
                   )}
+
                   {viewingExpense.status === "rejected" && (
-                    <div className="space-y-2">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-955/20 rounded-lg border border-rose-200 dark:border-rose-900/30">
-                        Rechazado por Administración
-                      </span>
-                      <div className="p-3 bg-rose-50/50 dark:bg-rose-950/10 border border-rose-100 dark:border-rose-900/30 rounded-lg text-rose-700 dark:text-rose-400">
-                        <strong className="block mb-0.5 font-sans">Motivo del rechazo:</strong>
+                    <div className="mt-4 p-3 bg-rose-50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-400 rounded-xl border border-rose-200 dark:border-rose-900/50 flex flex-col gap-1.5">
+                      <div className="flex items-center gap-2">
+                        <XCircle className="w-5 h-5 shrink-0" />
+                        <span className="font-semibold text-sm">Gasto Rechazado</span>
+                      </div>
+                      {viewingExpense.approvedAt && (
+                        <p className="text-[10px] text-rose-600/80 dark:text-rose-400/80">Fecha resolución: {new Date(viewingExpense.approvedAt?.seconds ? viewingExpense.approvedAt.seconds * 1000 : viewingExpense.approvedAt).toLocaleString("es-CL")}</p>
+                      )}
+                      {viewingExpense.approvedByName && (
+                        <p className="text-[10px] text-rose-600/80 dark:text-rose-400/80 font-medium">Revisado por: {viewingExpense.approvedByName} ({viewingExpense.approvedByRut || "Sin RUT"})</p>
+                      )}
+                      <div className="mt-2 p-2.5 bg-white dark:bg-slate-900 border border-rose-100 dark:border-rose-900/50 rounded-lg text-xs font-medium text-rose-700 dark:text-rose-300">
                         <span>{viewingExpense.rejectionReason}</span>
                       </div>
                     </div>

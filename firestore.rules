@@ -62,9 +62,7 @@ service cloud.firestore {
 
     // Matches
     match /users/{userId} {
-      allow get: if isSignedIn();
-      // Only admins can query list of users for validation
-      allow list: if isAdmin();
+      allow read: if isSignedIn();
       
       // Creation rule: User can create their profile.
       // Boostrapped Admin check: User with maxifireman.mu@gmail.com can self-register as admin and approved=true

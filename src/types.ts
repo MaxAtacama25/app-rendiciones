@@ -33,4 +33,6 @@ export interface Expense {
   createdAt: any;
   approvedAt?: any;
   approvedBy?: any;
+  approvedByName?: string;
+  approvedByRut?: string;
 }
