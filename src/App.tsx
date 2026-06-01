@@ -119,8 +119,9 @@ export default function App() {
   const [rejectionReasonInput, setRejectionReasonInput] = useState<string>("");
   const [rejectionError, setRejectionError] = useState<string>("");
   
-  // Selection View details modal state
+  // Modal and details view state
   const [viewingExpense, setViewingExpense] = useState<Expense | null>(null);
+  const [fullScreenImage, setFullScreenImage] = useState<string | null>(null);
   const [editExpenseId, setEditExpenseId] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
 
@@ -2260,12 +2261,22 @@ export default function App() {
                       </a>
                     </div>
                   ) : (
-                    <img
-                      src={viewingExpense.receiptBase64}
-                      alt="Recibo"
-                      className="max-h-full max-w-full object-contain rounded-lg shadow-inner"
-                      referrerPolicy="no-referrer"
-                    />
+                    <div className="relative group w-full h-full flex justify-center items-center">
+                      <img
+                        src={viewingExpense.receiptBase64}
+                        alt="Recibo"
+                        className="max-h-full max-w-full object-contain rounded-lg shadow-inner cursor-pointer"
+                        referrerPolicy="no-referrer"
+                        onClick={() => setFullScreenImage(viewingExpense.receiptBase64 || null)}
+                      />
+                      <button
+                        onClick={() => setFullScreenImage(viewingExpense.receiptBase64 || null)}
+                        className="absolute bottom-4 right-4 bg-slate-900/80 hover:bg-slate-900 text-white p-2.5 rounded-full shadow-lg backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 cursor-pointer"
+                        title="Ampliar comprobante"
+                      >
+                        <Search className="w-5 h-5" />
+                      </button>
+                    </div>
                   )
                 ) : (
                   <div className="text-slate-400 p-8">
@@ -2288,6 +2299,24 @@ export default function App() {
             </div>
 
           </div>
+        </div>
+      )}
+
+      {/* FULL SCREEN IMAGE LIGHTBOX */}
+      {fullScreenImage && (
+        <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
+          <button
+            onClick={() => setFullScreenImage(null)}
+            className="absolute top-4 right-4 text-white/70 hover:text-white p-2 cursor-pointer z-[61]"
+            title="Cerrar vista ampliada"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          <img
+            src={fullScreenImage}
+            alt="Comprobante Ampliado"
+            className="max-w-full max-h-[90vh] object-contain rounded shadow-2xl"
+          />
         </div>
       )}
 
